@@ -5,7 +5,7 @@
 #include "defs.h"
 #include "shm.h"
 
-clientinfo_t *shm_create_ci(i32 *shmid) 
+clientinfo_t *shm_create_ci(int32_t *shmid) 
 {
     clientinfo_t *ci;
     *shmid = shmget(IPC_PRIVATE, sizeof(clientinfo_t), IPC_CREAT | 0666);
@@ -18,7 +18,7 @@ clientinfo_t *shm_create_ci(i32 *shmid)
     return ci;
 }
 
-playerinfo_t *shm_create_pi(i32 *shmid, key_t key, u16 num_players) 
+playerinfo_t *shm_create_pi(int32_t *shmid, key_t key, uint16_t num_players) 
 {
     playerinfo_t *pi;
     *shmid = shmget(key, sizeof(playerinfo_t) * (num_players - 1), IPC_CREAT | 0666);
@@ -31,7 +31,7 @@ playerinfo_t *shm_create_pi(i32 *shmid, key_t key, u16 num_players)
     return pi;
 }
 
-piece_t *shm_create_pc(i32 *shmid, key_t key, u16 num_pieces)
+piece_t *shm_create_pc(int32_t *shmid, key_t key, uint16_t num_pieces)
 {
     piece_t *pc;
     *shmid = shmget(key, sizeof(piece_t) * num_pieces, IPC_CREAT | 0666);
@@ -44,19 +44,19 @@ piece_t *shm_create_pc(i32 *shmid, key_t key, u16 num_pieces)
     return pc;
 }
 
-void shm_destroy_ci(i32 shmid, clientinfo_t *ci)
+void shm_destroy_ci(int32_t shmid, clientinfo_t *ci)
 {
     shmctl(shmid, IPC_RMID, 0);
     shmdt(ci);
 }
 
-void shm_destroy_pi(i32 shmid, playerinfo_t *pi)
+void shm_destroy_pi(int32_t shmid, playerinfo_t *pi)
 {
     shmctl(shmid, IPC_RMID, 0);
     shmdt(pi);
 }
 
-void shm_destroy_pc(i32 shmid, piece_t *pc)
+void shm_destroy_pc(int32_t shmid, piece_t *pc)
 {
     shmctl(shmid, IPC_RMID, 0);
     shmdt(pc);

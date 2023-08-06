@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
-#include <sha1.h>
+// #include <sha1.h>
 
 #include "defs.h"
 #include "connect.h"
@@ -26,12 +26,12 @@ void set_args(int argc, char *argv[], clientinfo_t *ci)
     ci->player_num_wish = -1;
     strcpy(ci->conf_name, "client.conf");
     
-    i32 option;
+    int32_t option;
     while ((option = getopt(argc, argv, "g:p:c:")) != -1) {
         switch (option)
         {
         case 'p':
-            ci->player_num_wish = (i16) atoi(optarg); break;
+            ci->player_num_wish = (int16_t) atoi(optarg); break;
         case 'g':
             strncpy(ci->game_id, optarg, ID_LEN - 1); break;
         case 'c':
@@ -65,7 +65,7 @@ void init_clientinfo_pids(clientinfo_t *ci)
 // flag that is set by sighandler
 volatile __sig_atomic_t g_think_flag = 0;
 
-void signal_handler_func(i32 signum)
+void signal_handler_func(int32_t signum)
 {
     //printf("signal received\n");
     if (signum == SIGUSR1) {
@@ -80,13 +80,13 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    i32 pipe_fd[2];
+    int32_t pipe_fd[2];
     if (pipe(pipe_fd) == -1) {
         perror("pipe()");
         return -1;
     }
 
-    i32 ci_id;
+    int32_t ci_id;
     clientinfo_t *ci = shm_create_ci(&ci_id);
     if (ci == NULL) {
         perror("shm_create_ci()");
@@ -111,8 +111,8 @@ int main(int argc, char *argv[])
             perror("sigaction()");
         }
 
-        i32 pi_id, pc_id;
-        playerinfo_t *pi = NULL;
+        int32_t pi_id, pc_id;
+        playerinfo_t *pi;
         piece_t *pc = NULL;     
         
         while (1) {

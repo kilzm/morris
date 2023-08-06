@@ -4,6 +4,6 @@
 #include "../defs.h"
 #include "board.h"
 
-i32 eval_board(board_t *board, playercolor_t client_colo);
+int32_t eval_board(board_t *board);
 
 #endif /* EVAL_H */

@@ -23,12 +23,12 @@ void parse_gamename(char *buf, clientinfo_t *ci)
 
 void parse_client_player(char *buf, playerinfo_t *pi)
 {
-    i16 player_num;
+    int16_t player_num;
     sscanf(buf, "+ YOU %hd %[^\t\n]\n", &player_num, pi->name);
     pi->ready = 1;
     switch (player_num) {
-        case 0: pi->colo = WHITE; break;
-        case 1: pi->colo = BLACK; break;
+        case 0: pi->color = WHITE; break;
+        case 1: pi->color = BLACK; break;
         default: assert(false);
     }
 }
@@ -40,18 +40,18 @@ void parse_num_players(char *buf, clientinfo_t *ci)
 
 void parse_other_player(char *buf, playerinfo_t *pi)
 {
-    i16 player_num;
+    int16_t player_num;
     char name_flag[NAME_LEN + 2];
     sscanf(buf, "+ %hd %[^\t\n]\n", &player_num, name_flag);
     size_t name_len = strlen(name_flag) - 2;
 
     switch (player_num) {
-        case 0: pi->colo = WHITE; break;
-        case 1: pi->colo = BLACK; break;
+        case 0: pi->color = WHITE; break;
+        case 1: pi->color = BLACK; break;
         default: assert(false);
     }
 
-    pi->ready = (bool) name_flag[name_len + 1] - '0';
+    pi->ready = name_flag[name_len + 1] - '0';
     memcpy(pi->name, name_flag, name_len);
 }
 
@@ -83,7 +83,7 @@ void parse_capture(char *buf, clientinfo_t *ci)
 
 void parse_piece(char *buf, piece_t *pc)
 {
-    i16 player_num;
+    int16_t player_num;
     sscanf(buf, "+ PIECE%hd.%hd %s", &player_num, &pc->piece_num, pc->position);
     switch (player_num) {
         case 0: pc->color = WHITE; break;
@@ -94,15 +94,15 @@ void parse_piece(char *buf, piece_t *pc)
 
 void parse_win(char *buf, clientinfo_t *ci, playerinfo_t *pi)
 {
-    i16 player_num;
+    int16_t player_num;
     char winstr[3];
     sscanf(buf, "+ PLAYER%hdWON %s\n", &player_num, winstr);
     bool won = (strncmp(winstr, "Yes", 3) == 0);
-    if (ci->client.colo == (playercolor_t) player_num) {
+    if (ci->client.color == (playercolor_t) player_num) {
         ci->client.winner = won;
     } else {
-        for (i32 i = 0; i < ci->num_players - 1; ++i) {
-            if (pi[i].colo == (playercolor_t) player_num) {
+        for (int32_t i = 0; i < ci->num_players - 1; ++i) {
+            if (pi[i].color == (playercolor_t) player_num) {
                 pi[i].winner = won;
             }
         }
@@ -113,9 +113,9 @@ void print_player(playerinfo_t *pi)
 {
     printf("\n");
     if (pi->ready) {
-        printf("Player %d: %s is ready\n", pi->colo + 1, pi->name);
+        printf("Player %d: %s is ready\n", pi->color + 1, pi->name);
     } else {
-        printf("Player %d: %s is not ready\n", pi->colo + 1, pi->name);
+        printf("Player %d: %s is not ready\n", pi->color + 1, pi->name);
     }
     printf("\n");
 }
@@ -123,7 +123,7 @@ void print_player(playerinfo_t *pi)
 void print_winner(playerinfo_t *pi, clientinfo_t *ci)
 {
     bool draw = ci->client.winner;
-    for (i32 i = 0; i < ci->num_players - 1; ++i) {
+    for (int32_t i = 0; i < ci->num_players - 1; ++i) {
         draw &= pi[i].winner;
     }
     if (draw) {
@@ -131,7 +131,7 @@ void print_winner(playerinfo_t *pi, clientinfo_t *ci)
     } else if (ci->client.winner) {
         printf("Congrats! %s won.\n", ci->client.name);
     } else {
-        for (i32 i = 0; i < ci->num_players - 1; ++i) {
+        for (int32_t i = 0; i < ci->num_players - 1; ++i) {
             if (pi[i].winner) {
                 printf("Better luck next time! %s won.\n", pi[i].name);
             }

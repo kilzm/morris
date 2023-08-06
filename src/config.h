@@ -5,7 +5,7 @@
 
 typedef struct config {
     char host[NAME_LEN];
-    u16 port;
+    uint16_t port;
     char gamekind[NAME_LEN];
 } config_t;
 

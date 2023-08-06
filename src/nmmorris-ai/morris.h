@@ -3,7 +3,7 @@
 
 #include "../defs.h"
 
-typedef u32 bitboard_t;
+typedef uint32_t bitboard_t;
 
 typedef enum boardpos {
     CP = -3, OH = -2, IV = -1,
@@ -17,7 +17,7 @@ extern const char *boardpos_str[NUM_POS];
 extern const boardpos_t adjacent[24][4];
 extern const bitboard_t adjacentb[24];
 extern const bitboard_t mills[16];
-extern const i32 piece_mills[24][2];
+extern const int32_t piece_mills[24][2];
 
 // return bit mask with bit at index enabled
 #define M(index) (1U << (index))

@@ -24,17 +24,4 @@ typedef enum err {
 
 #define err_check_return(err_code) { if (err_code < 0) { return err_code; } }
 
-typedef uint64_t u64;
-typedef uint32_t u32;
-typedef uint16_t u16;
-typedef uint8_t  u8;
-
-typedef int64_t i64;
-typedef int32_t i32;
-typedef int16_t i16;
-typedef int8_t  i8;
-
-#define true 1
-#define false 0
-
 #endif /* DEFS_H */

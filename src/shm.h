@@ -19,11 +19,12 @@ typedef enum serverphase {
 } __attribute__ ((__packed__)) serverphase_t;
 
 typedef enum playercolor {
-    WHITE, BLACK
+    WHITE = 1,
+    BLACK = -1,
 } playercolor_t;
 
 typedef struct playerinfo {
-    playercolor_t colo;
+    playercolor_t color;
     char name[NAME_LEN];
     bool ready;
     bool winner;
@@ -35,10 +36,10 @@ typedef struct clientinfo {
     char game_id[ID_LEN];
     char gamename[NAME_LEN];
     gamekind_t gamekind;
-    i16 player_num_wish;
+    int16_t player_num_wish;
     playerinfo_t client;
-    u16 num_players;
-    u16 num_pieces;
+    uint16_t num_players;
+    uint16_t num_pieces;
 
     key_t keys_shm[2];
     pid_t pid_thinker;
@@ -47,21 +48,21 @@ typedef struct clientinfo {
 
     serverphase_t serverphase;
     time_t time_to_move;
-    i16 num_caps;
+    int16_t num_caps;
 } clientinfo_t;
 
 typedef struct piece {
     playercolor_t color;
-    i16 piece_num;
+    int16_t piece_num;
     char position[2];
 } piece_t;
 
-clientinfo_t *shm_create_ci(i32 *shmid);
-playerinfo_t *shm_create_pi(i32 *shmid, key_t key, u16 num_players);
-piece_t *shm_create_pc(i32 *shmid, key_t key, u16 num_pieces);
+clientinfo_t *shm_create_ci(int32_t *shmid);
+playerinfo_t *shm_create_pi(int32_t *shmid, key_t key, uint16_t num_players);
+piece_t *shm_create_pc(int32_t *shmid, key_t key, uint16_t num_pieces);
 
-void shm_destroy_ci(i32 shmid, clientinfo_t *ci);
-void shm_destroy_pi(i32 shmid, playerinfo_t *pi);
-void shm_destroy_pc(i32 shmid, piece_t *pc);
+void shm_destroy_ci(int32_t shmid, clientinfo_t *ci);
+void shm_destroy_pi(int32_t shmid, playerinfo_t *pi);
+void shm_destroy_pc(int32_t shmid, piece_t *pc);
 
 #endif /* SHM_H */

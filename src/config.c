@@ -18,7 +18,7 @@ void read_config(const char *path, config_t *conf)
         if (strncmp(key, "HOST", NAME_LEN) == 0) {
             strncpy(conf->host, val, NAME_LEN - 1);
         } else if (strncmp(key, "PORT", NAME_LEN) == 0) {
-            conf->port = (u16) atoi(val);
+            conf->port = (uint16_t) atoi(val);
         } else if (strncmp(key, "GAME", NAME_LEN) == 0) {
             strncpy(conf->gamekind, val, NAME_LEN - 1);
         }

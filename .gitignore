@@ -1,5 +1,4 @@
-sysprak-client
+/bin/sysprak-client
 
 .vscode/
-*.o
 tests/

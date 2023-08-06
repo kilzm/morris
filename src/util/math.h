@@ -3,8 +3,8 @@
 
 #include "../defs.h"
 
-i32 max(i32 a, i32 b);
-i32 min(i32 a, i32 b);
-i32 mod(i32 a, i32 m);
+int32_t max(int32_t a, int32_t b);
+int32_t min(int32_t a, int32_t b);
+int32_t mod(int32_t a, int32_t m);
 
 #endif /* MATH_H */

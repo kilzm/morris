@@ -14,7 +14,7 @@ boardpos_t get_board_pos(char pos[2])
     return (pos[0] - 'A') * 8 + pos[1] - '0';
 }
 
-void set_playerboard(playerboard_t *ps, boardpos_t pos, i16 pc_num)
+void set_playerboard(playerboard_t *ps, boardpos_t pos, int16_t pc_num)
 {
     ps->pieces[pc_num % 9] = pos;
     if (pos == OH) {
@@ -39,9 +39,9 @@ void set_playerboard(playerboard_t *ps, boardpos_t pos, i16 pc_num)
 void set_board(board_t *board, piece_t *pc, playerinfo_t *client) 
 {
     memset(board, 0, sizeof *board);
-    board->white_to_move = (client->colo == WHITE);
+    board->white_to_move = (client->color == WHITE);
     boardpos_t pos;
-    for (i16 pc_num = 0; pc_num < 18; ++pc_num) {
+    for (int16_t pc_num = 0; pc_num < 18; ++pc_num) {
         pos = get_board_pos(pc[pc_num].position);
         switch (pc[pc_num].color) 
         {
@@ -63,6 +63,13 @@ bitboard_t get_empty(board_t *board)
 bitboard_t get_occupied(board_t *board)
 {
     return (board->white.board | board->black.board);
+}
+
+bool boards_equal(board_t board1, board_t board2) {
+    bool result = true;
+    result &= board1.black.board == board2.black.board;
+    result &= board1.black.board_pieces == board2.black.board_pieces;
+
 }
 
 typedef enum boardedge {
@@ -106,14 +113,13 @@ void print_gameboard(board_t *board)
     printf("%s---------%s---------%s\n\n", s[b[A6]], s[b[A5]], s[b[A4]]);
 }
 
-void print_bitboard(size_t const size, void const * const ptr)
+void print_bitboard(int const size, void * const ptr)
 {
     unsigned char *b = (unsigned char*) ptr;
     unsigned char byte;
-    int i, j;
     
-    for (i = size-1; i >= 0; i--) {
-        for (j = 7; j >= 0; j--) {
+    for (int i = size-1; i >= 0; i--) {
+        for (int j = 7; j >= 0; j--) {
             byte = (b[i] >> j) & 1;
             printf("%u", byte);
         }

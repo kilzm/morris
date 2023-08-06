@@ -30,7 +30,7 @@ void make_move_color(playerboard_t *self, playerboard_t *other, move_t *move)
         }
         self->board = set_piece(self->board, move->to);
         self->pieces[move->movedi] = move->to;
-        for (i16 i = 0; i < move->num_caps; ++i) {
+        for (int16_t i = 0; i < move->num_caps; ++i) {
             other->board = rem_piece(other->board, move->caps[i]);
             other->board_pieces--;
             other->pieces[move->capsi[i]] = CP;
@@ -79,7 +79,7 @@ void unmake_move_color(playerboard_t *self, playerboard_t *other, move_t *move)
             self->board_pieces--;
             self->board = rem_piece(self->board, move->to);
             self->pieces[move->movedi] = OH;
-            for (i16 i = 0; i < move->num_caps; ++i) {
+            for (int16_t i = 0; i < move->num_caps; ++i) {
                 other->board = set_piece(other->board, move->caps[i]);
                 other->board_pieces++;
                 other->pieces[move->capsi[i]] = move->caps[i];
@@ -115,7 +115,7 @@ void unmake_move(board_t *board, move_t *move)
     }
 }
 
-void set_move_str(char *movestr, move_t *move, i16 num_caps)
+void set_move_str(char *movestr, move_t *move, int16_t num_caps)
 {
     memset(movestr, '\0', 6);
     switch (num_caps) 
@@ -141,7 +141,7 @@ void set_move_str(char *movestr, move_t *move, i16 num_caps)
     }
 }
 
-i32 get_caps_set(bitboard_t board, boardpos_t to)
+int32_t get_caps_set(bitboard_t board, boardpos_t to)
 {
     bitboard_t mill1, mill2;
     mill1 = mills[piece_mills[to][0]];
@@ -169,11 +169,11 @@ void print_move(move_t *move)
         case GMO: phase = "GMO"; break;
         default: break;
     }
-    const char *from = move->from >= A0 ? boardpos_str[move->from] : "__";
-    const char *to = move->to >= A0 ? boardpos_str[move->to] : "__";
-    const char *cap = move->caps[0] >= A0 ? boardpos_str[move->caps[0]] : "__";
-    printf("PHASE: %s, %d|%s -> %d|%s\"n", phase, move->from, from, move->to, to);
+    const char *from = move->from >= A0 ? boardpos_str[move->from] : "";
+    const char *to = move->to >= A0 ? boardpos_str[move->to] : "";
+    printf("%s, %s%s ", phase, from, to);
     if (move->num_caps) {
-        printf("CAP: %d|%s\n", move->caps[0], cap);
+        const char *cap = move->caps[0] >= A0 ? boardpos_str[move->caps[0]] : "";
+        printf("C: %s\n", cap);
     }
 }

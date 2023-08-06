@@ -15,9 +15,9 @@
 #include "connect.h"
 #include "parse.h"
 
-i32 socket_connect(config_t *config)
+int32_t socket_connect(config_t *config)
 {
-    i32 sock_fd;
+    int32_t sock_fd;
     struct sockaddr_in server_addr;
     struct hostent *host;
     struct in_addr **ip_host;
@@ -40,7 +40,7 @@ i32 socket_connect(config_t *config)
     return sock_fd;
 }
 
-err_t get_server_line(i32 sock_fd, char *buf) 
+err_t get_server_line(int32_t sock_fd, char *buf) 
 {
     memset(buf, 0, BUF_SIZE);
     ssize_t b_recvd, b_total = 0;
@@ -65,7 +65,7 @@ err_t get_server_line(i32 sock_fd, char *buf)
     }
 }
 
-err_t put_client_line(i32 sock_fd, const char *format, ...) 
+err_t put_client_line(int32_t sock_fd, const char *format, ...) 
 {
     char buf[BUF_SIZE] = {0};
     va_list args;
@@ -82,7 +82,7 @@ err_t put_client_line(i32 sock_fd, const char *format, ...)
     return NO_ERROR;
 }
 
-err_t prolog(i32 sock_fd, clientinfo_t *ci, i32 *pi_id, playerinfo_t **pi)
+err_t prolog(int32_t sock_fd, clientinfo_t *ci, int32_t *pi_id, playerinfo_t **pi)
 {
     char buf[BUF_SIZE];
     err_t ec;
@@ -90,11 +90,9 @@ err_t prolog(i32 sock_fd, clientinfo_t *ci, i32 *pi_id, playerinfo_t **pi)
     /* S: ACCEPTING CONNECTIONS */
     ec = get_server_line(sock_fd, buf);
     err_check_return(ec);   
-    ec = get_server_line(sock_fd, buf);
-    err_check_return(ec);
     
     /* C: CLIENT VERSION */
-    ec = put_client_line(sock_fd, "VERSION %s\n", "3.1");
+    ec = put_client_line(sock_fd, "VERSION %s\n", "2.1");
     err_check_return(ec);
 
     /* S: ACCEPT CLIENT VERSION */
@@ -131,7 +129,7 @@ err_t prolog(i32 sock_fd, clientinfo_t *ci, i32 *pi_id, playerinfo_t **pi)
     parse_num_players(buf, ci); 
 
     *pi = shm_create_pi(pi_id, ci->keys_shm[0], ci->num_players);
-    for (i32 player = 0; player < ci->num_players - 1; ++player) {
+    for (int32_t player = 0; player < ci->num_players - 1; ++player) {
         ec = get_server_line(sock_fd, buf);
         err_check_return(ec);
         parse_other_player(buf, pi[player]);
@@ -144,14 +142,14 @@ err_t prolog(i32 sock_fd, clientinfo_t *ci, i32 *pi_id, playerinfo_t **pi)
     return NO_ERROR;
 }
 
-err_t gameplay_wait(i32 sock_fd) 
+err_t gameplay_wait(int32_t sock_fd) 
 {
     err_t ec;
     ec = put_client_line(sock_fd, "OKWAIT\n");
     return ec;
 }
 
-err_t receive_pieces(i32 sock_fd, clientinfo_t *ci, piece_t *pc)
+err_t receive_pieces(int32_t sock_fd, clientinfo_t *ci, piece_t *pc)
 {
     char buf[BUF_SIZE];
     err_t ec;
@@ -173,7 +171,7 @@ err_t receive_pieces(i32 sock_fd, clientinfo_t *ci, piece_t *pc)
     return NO_ERROR;
 }
 
-err_t gameplay_move(i32 sock_fd, clientinfo_t *ci, piece_t *pc) 
+err_t gameplay_move(int32_t sock_fd, clientinfo_t *ci, piece_t *pc) 
 {
     char buf[BUF_SIZE];
     err_t ec;
@@ -197,7 +195,7 @@ err_t gameplay_move(i32 sock_fd, clientinfo_t *ci, piece_t *pc)
     return NO_ERROR;
 }
 
-err_t gameplay_play(i32 sock_fd, i32 pipe_fd)
+err_t gameplay_play(int32_t sock_fd, int32_t pipe_fd)
 {
     char buf[BUF_SIZE];
     err_t ec;
@@ -214,7 +212,7 @@ err_t gameplay_play(i32 sock_fd, i32 pipe_fd)
     return NO_ERROR;
 }
 
-err_t gameplay_gameover(i32 sock_fd, clientinfo_t *ci, playerinfo_t *pi, piece_t *pc)
+err_t gameplay_gameover(int32_t sock_fd, clientinfo_t *ci, playerinfo_t *pi, piece_t *pc)
 {
     char buf[BUF_SIZE];
     err_t ec;
@@ -222,7 +220,7 @@ err_t gameplay_gameover(i32 sock_fd, clientinfo_t *ci, playerinfo_t *pi, piece_t
     ec = receive_pieces(sock_fd, ci, pc);
     err_check_return(ec);
 
-    for (i32 i = 0; i < ci->num_players; ++i) {
+    for (int32_t i = 0; i < ci->num_players; ++i) {
         /* S: PLAYERXWON */
         ec = get_server_line(sock_fd, buf);
         err_check_return(ec);
@@ -238,7 +236,7 @@ err_t gameplay_gameover(i32 sock_fd, clientinfo_t *ci, playerinfo_t *pi, piece_t
     return NO_ERROR;
 }
 
-err_t gameplay(i32 sock_fd, clientinfo_t *ci, playerinfo_t *pi, piece_t *pc) 
+err_t gameplay(int32_t sock_fd, clientinfo_t *ci, playerinfo_t *pi, piece_t *pc) 
 {
     char buf[BUF_SIZE];
     err_t ec;
@@ -273,26 +271,26 @@ err_t gameplay(i32 sock_fd, clientinfo_t *ci, playerinfo_t *pi, piece_t *pc)
     return NO_ERROR;
 }
 
-err_t perform_connection(clientinfo_t *ci, i32 pipe_fd) 
+err_t perform_connection(clientinfo_t *ci, int32_t pipe_fd) 
 {
     err_t ec = NO_ERROR;
-    i32 sock_fd;
+    int32_t sock_fd;
     sock_fd = socket_connect(&ci->config);
     if (sock_fd == -1) {
         return SOCK_ERROR;
     }
 
-    i32 pi_id;
+    int32_t pi_id;
     playerinfo_t *pi = NULL;
     ec = prolog(sock_fd, ci, &pi_id, &pi);
     err_check_return(ec);
 
     print_player(&ci->client);
-    for (i32 i = 0; i < ci->num_players - 1; ++i) {
+    for (int32_t i = 0; i < ci->num_players - 1; ++i) {
         print_player(&pi[i]);
     }
 
-    i32 pc_id;
+    int32_t pc_id;
     piece_t *pc = NULL;
     switch (ci->gamekind) {
         case NMMORRIS:
@@ -312,7 +310,7 @@ err_t perform_connection(clientinfo_t *ci, i32 pipe_fd)
     poll_fds[1].fd = pipe_fd;
     poll_fds[1].events = POLLIN;
     
-    i32 poll_ret;
+    int32_t poll_ret;
     while (true) {
         poll_ret = poll(&poll_fds[0], nfds, TIMEOUT_MS);
         if (poll_ret == -1) {

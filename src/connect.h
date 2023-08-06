@@ -5,6 +5,6 @@
 
 #include "shm.h"
 
-err_t perform_connection(clientinfo_t *ci, i32 pipe_fd);
+err_t perform_connection(clientinfo_t *ci, int32_t pipe_fd);
 
 #endif /* CONNECT_H */

@@ -11,15 +11,15 @@ typedef struct move {
     boardpos_t from;
     boardpos_t to;
     boardpos_t caps[2];
-    i16 num_caps;
-    i16 movedi;
-    i16 capsi[2];
+    int16_t num_caps;
+    int16_t movedi;
+    int16_t capsi[2];
     gamephase_t phase;
 } move_t;
 
-void set_move_str(char *movestr, move_t *move, i16 caps);
+void set_move_str(char *movestr, move_t *move, int16_t caps);
 
-i32 get_caps_set(bitboard_t board, boardpos_t to);
+int32_t get_caps_set(bitboard_t board, boardpos_t to);
 bool get_cap_mov_jmp(bitboard_t board, boardpos_t from, boardpos_t to);
 
 void move_invalid(move_t *move);

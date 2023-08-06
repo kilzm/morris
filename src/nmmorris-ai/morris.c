@@ -45,7 +45,7 @@ const bitboard_t mills[16] = {
 };
 
 /* corresponding mill indices to a position on the board */
-const i32 piece_mills[24][2] = {
+const int32_t piece_mills[24][2] = {
     [A0] = {3, 0}, [A1] = {0, 12}, [A2] = {0, 1}, [A3] = {1, 13},
     [A4] = {1, 2}, [A5] = {2, 14}, [A6] = {2, 3}, [A7] = {3, 15},
     [B0] = {7, 4}, [B1] = {4, 12}, [B2] = {4, 5}, [B3] = {5, 13},

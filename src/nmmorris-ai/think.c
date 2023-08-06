@@ -12,21 +12,21 @@
 
 move_t current_move;
 
-void rthink(char *movestr, piece_t *pc, i16 num_caps, playerinfo_t *client) 
+void rthink(char *movestr, piece_t *pc, int16_t num_caps, playerinfo_t *client) 
 {
     board_t board;
     set_board(&board, pc, client);
     print_gameboard(&board);
     if (num_caps == 0) {
         move_t *movelist = v_get_movelist(&board);
-        srand((u32) time(NULL));
-        memcpy(&current_move, &movelist[mod(rand(), (i32) vec_get_length(movelist))], sizeof(move_t));
+        srand((uint32_t) time(NULL));
+        memcpy(&current_move, &movelist[mod(rand(), (int32_t) vec_get_length(movelist))], sizeof(move_t));
         vec_free(movelist);
     }
     set_move_str(movestr, &current_move, num_caps);
 }
 
-void think(char *movestr, time_t time_to_move, piece_t *pc, i16 num_caps, playerinfo_t *client)
+void think(char *movestr, time_t time_to_move, piece_t *pc, int16_t num_caps, playerinfo_t *client)
 {
     board_t board;
     set_board(&board, pc, client);
