@@ -65,13 +65,6 @@ bitboard_t get_occupied(board_t *board)
     return (board->white.board | board->black.board);
 }
 
-bool boards_equal(board_t board1, board_t board2) {
-    bool result = true;
-    result &= board1.black.board == board2.black.board;
-    result &= board1.black.board_pieces == board2.black.board_pieces;
-
-}
-
 typedef enum boardedge {
     EDG_L, EDG_R, EDG_M, PCE_W, PCE_B,
 } boardedge_t;

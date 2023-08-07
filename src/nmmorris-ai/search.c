@@ -25,6 +25,7 @@ int32_t negamax(move_t *best_move, board_t *board, uint32_t depth, uint32_t ply,
         make_move(board, &move);
         eval = -negamax(best_move, board, depth - 1, ply + 1, -beta, -alpha, -color);
         unmake_move(board, &move);
+
         if (ply == 0) {
             print_move(&move);
             printf("%d\n", eval);
@@ -47,10 +48,15 @@ int32_t negamax(move_t *best_move, board_t *board, uint32_t depth, uint32_t ply,
     return max_eval;
 }
 
-void search(move_t *best_move, board_t *board, time_t time_to_move)
+void search(move_t *best_move, board_t *board)
 {
     playercolor_t client_color = board->white_to_move ? WHITE : BLACK;
     negamax(best_move, board, 3, 0, -100000, 100000, client_color);
+}
+
+void *thread_search(void *arg) {
+    searchinfo_t *sinfo = arg;
+    search(sinfo->best_move, sinfo->board);
 }
 
 // void search(move_t *best_move, board_t *board, time_t time_to_move)

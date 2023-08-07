@@ -33,7 +33,6 @@ void set_board(board_t *board, piece_t *pc, playerinfo_t *client);
 bitboard_t get_empty(board_t *board);
 bitboard_t get_occupied(board_t *board);
 
-bool boards_equal(board_t board1, board_t board2);
 
 void print_gameboard(board_t *board);
 void print_bitboard(int const size, void * const ptr);

@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 #include <stdio.h>
+#include <pthread.h>
 
 #include "think.h"
 #include "moves.h"
@@ -28,11 +30,16 @@ void rthink(char *movestr, piece_t *pc, int16_t num_caps, playerinfo_t *client)
 
 void think(char *movestr, time_t time_to_move, piece_t *pc, int16_t num_caps, playerinfo_t *client)
 {
+
     board_t board;
     set_board(&board, pc, client);
     print_gameboard(&board);
     if (num_caps == 0) {
-        search(&current_move, &board, time_to_move);
+        pthread_t search_thread;
+        searchinfo_t sinfo = { .best_move = &current_move, .board = &board };
+        pthread_create(&search_thread, NULL, thread_search, (void*) &sinfo);
+        sleep(1);
+        // pthread_join(search_thread, NULL);
     }
     set_move_str(movestr, &current_move, num_caps); 
 }
