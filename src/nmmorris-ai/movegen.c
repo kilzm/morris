@@ -133,6 +133,7 @@ move_t *v_get_movelist_color(playerboard_t *self, playerboard_t *other, bitboard
         movelist = v_get_movelist_jmp(self, other, occupied);
         break;
     case GMO:
+        movelist = vec_with_cap(0, sizeof *movelist);
         break;
     default:
         assert(false);

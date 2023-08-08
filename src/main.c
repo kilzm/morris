@@ -6,7 +6,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
-// #include <sha1.h>
 
 #include "defs.h"
 #include "connect.h"

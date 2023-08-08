@@ -73,7 +73,7 @@ void parse_server_phase(char *buf, clientinfo_t *ci)
 
 void parse_move_time(char *buf, clientinfo_t *ci)
 {
-    sscanf(buf, "+ MOVE %ld\n", &ci->time_to_move);
+    sscanf(buf, "+ MOVE %u\n", &ci->time_to_move);
 }
 
 void parse_capture(char *buf, clientinfo_t *ci)

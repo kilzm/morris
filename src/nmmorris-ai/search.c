@@ -2,6 +2,7 @@
 #include <string.h>
 #include <limits.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "search.h"
 #include "movegen.h"
@@ -9,9 +10,25 @@
 #include "../util/vec.h"
 #include "../util/math.h"
 
+#define COPY_BOARD true
+
+static inline
+bool quit_mutex_locked(pthread_mutex_t *mtx) {
+    if(pthread_mutex_trylock(mtx) == 0) {
+        pthread_mutex_unlock(mtx);
+        return false;
+    }
+    return true;
+}
+
 int32_t negamax(move_t *best_move, board_t *board, uint32_t depth, uint32_t ply, 
-                int32_t alpha, int32_t beta, playercolor_t color)
+                int32_t alpha, int32_t beta, playercolor_t color, pthread_mutex_t *mtx)
 {
+    int32_t gameover = eval_gameover(board);
+    if (gameover) {
+        return 10000 * color * gameover;
+    }
+
     if (depth == 0) {
         int32_t value = color * eval_board(board);
         return value;
@@ -20,16 +37,25 @@ int32_t negamax(move_t *best_move, board_t *board, uint32_t depth, uint32_t ply,
     int32_t eval;
     int32_t max_eval = INT32_MIN;
     move_t *movelist = v_get_movelist(board);
+    assert(movelist != NULL);
     for (size_t i = 0; i < vec_get_length(movelist); ++i) {
-        move_t move = movelist[i];
-        make_move(board, &move);
-        eval = -negamax(best_move, board, depth - 1, ply + 1, -beta, -alpha, -color);
-        unmake_move(board, &move);
+        if (!quit_mutex_locked(mtx)) break;
 
-        if (ply == 0) {
-            print_move(&move);
-            printf("%d\n", eval);
-        }
+        move_t move = movelist[i];
+
+    #if COPY_BOARD
+        board_t copy;
+        memcpy(&copy, board, sizeof *board);
+    #endif
+
+        make_move(board, &move);
+        eval = -negamax(best_move, board, depth - 1, ply + 1, -beta, -alpha, -color, mtx);
+
+    #if COPY_BOARD
+        memcpy(board, &copy, sizeof *board);
+    #else
+        unmake_move(board, &move);
+    #endif
 
         max_eval = max(eval, max_eval);
         if (max_eval > alpha) {
@@ -48,33 +74,30 @@ int32_t negamax(move_t *best_move, board_t *board, uint32_t depth, uint32_t ply,
     return max_eval;
 }
 
-void search(move_t *best_move, board_t *board)
-{
-    playercolor_t client_color = board->white_to_move ? WHITE : BLACK;
-    negamax(best_move, board, 3, 0, -100000, 100000, client_color);
-}
-
 void *thread_search(void *arg) {
     searchinfo_t *sinfo = arg;
-    search(sinfo->best_move, sinfo->board);
-}
 
-// void search(move_t *best_move, board_t *board, time_t time_to_move)
-// {
-//     move_t garbage;
-//     move_t *movelist = v_get_movelist(board);
-//     int32_t eval, best_eval = INT32_MIN;
-//     playercolor_t client_color = board->white_to_move ? WHITE : BLACK;
-//     for (size_t i = 0; i < vec_get_length(movelist); ++i) {
-//         make_move(board, &movelist[i]);
-//         eval = negamax(&garbage, board, 2, 0, INT32_MIN, INT32_MAX, client_color);
-//         unmake_move(board, &movelist[i]);
-//         print_move(&movelist[i]);
-//         printf(": %d\n", eval);
-//         if (eval > best_eval) {
-//             best_eval = eval;
-//             memcpy(best_move, &movelist[i], sizeof *best_move);
-//         }
-//     }
-//     vec_free(movelist);
-// }
+    move_t *best_move = sinfo->best_move;
+    board_t *board = sinfo->board;
+    playercolor_t client_color = sinfo->client_color;
+    pthread_mutex_t *mtx_quit = sinfo->mtx_quit;
+
+    uint32_t cur_depth = 1;
+    move_t cur_best_move;
+    move_invalid(&cur_best_move);
+
+    /* Iterative deepening loop */
+    while (true) {
+        negamax(&cur_best_move, board, cur_depth, 0, -INT32_MAX, INT32_MAX, client_color, mtx_quit);
+
+        if (!quit_mutex_locked(mtx_quit)) {
+            return NULL;
+        }
+
+        printf("depth: %d | best move: ", cur_depth); print_move(&cur_best_move);
+
+        memcpy(best_move, &cur_best_move, sizeof *best_move);
+
+        cur_depth++;
+    }
+}

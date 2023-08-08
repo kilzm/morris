@@ -74,32 +74,32 @@ void unmake_move_color(playerboard_t *self, playerboard_t *other, move_t *move)
 {
     switch (move->phase)
     {
-        case SET:
-            self->set_pieces++;
-            self->board_pieces--;
-            self->board = rem_piece(self->board, move->to);
-            self->pieces[move->movedi] = OH;
-            for (int16_t i = 0; i < move->num_caps; ++i) {
-                other->board = set_piece(other->board, move->caps[i]);
-                other->board_pieces++;
-                other->pieces[move->capsi[i]] = move->caps[i];
-            }
-            break;
-        case MOV:
-        case JMP:
-            self->board = mov_piece(self->board, move->to, move->from);
-            self->pieces[move->movedi] = move->from;
-            if (move->num_caps > 0) {
-                other->board = set_piece(other->board, move->caps[0]);
-                other->board++;
-                other->pieces[move->capsi[0]] = move->caps[0];
-            }
-            break;
-        case GMO:
-            break;
-        default:
-            assert(false);
-            break;
+    case SET:
+        self->set_pieces++;
+        self->board_pieces--;
+        self->board = rem_piece(self->board, move->to);
+        self->pieces[move->movedi] = OH;
+        for (int16_t i = 0; i < move->num_caps; ++i) {
+            other->board = set_piece(other->board, move->caps[i]);
+            other->board_pieces++;
+            other->pieces[move->capsi[i]] = move->caps[i];
+        }
+        break;
+    case MOV:
+    case JMP:
+        self->board = mov_piece(self->board, move->to, move->from);
+        self->pieces[move->movedi] = move->from;
+        if (move->num_caps > 0) {
+            other->board = set_piece(other->board, move->caps[0]);
+            other->board++;
+            other->pieces[move->capsi[0]] = move->caps[0];
+        }
+        break;
+    case GMO:
+        break;
+    default:
+        assert(false);
+        break;
     }
     self->phase = move->phase;
 }
@@ -161,7 +161,7 @@ bool get_cap_mov_jmp(bitboard_t board, boardpos_t from, boardpos_t to)
 
 void print_move(move_t *move)
 {
-    const char *phase;
+    const char *phase = NULL;
     switch (move->phase) {
         case SET: phase = "SET"; break;
         case MOV: phase = "MOV"; break;
@@ -174,6 +174,7 @@ void print_move(move_t *move)
     printf("%s, %s%s ", phase, from, to);
     if (move->num_caps) {
         const char *cap = move->caps[0] >= A0 ? boardpos_str[move->caps[0]] : "";
-        printf("C: %s\n", cap);
+        printf("C: %s", cap);
     }
+    printf("\n");
 }

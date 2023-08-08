@@ -47,7 +47,7 @@ typedef struct clientinfo {
     bool thinker_attach;
 
     serverphase_t serverphase;
-    time_t time_to_move;
+    uint32_t time_to_move;
     int16_t num_caps;
 } clientinfo_t;
 

@@ -49,19 +49,6 @@ int32_t eval_moves(board_t *board)
     return count_moves(&board->white, empty) - count_moves(&board->black, empty);
 }
 
-int32_t eval_board(board_t *board)
-{
-    int32_t evaluation = 0;
-    int32_t pcs = eval_pieces(board);
-    int32_t mls = eval_mills(board);
-    int32_t mvs = eval_moves(board);
-    evaluation += 40 * pcs;
-    evaluation += 20 * mls;
-    evaluation += 1 * mvs;
-    return evaluation;
-
-}
-
 int32_t eval_gameover(board_t *board)
 {
     if (board->black.phase == GMO) {
@@ -71,5 +58,13 @@ int32_t eval_gameover(board_t *board)
         return -1;
     }
     return 0;
+}
 
+int32_t eval_board(board_t *board)
+{
+    int32_t evaluation = 0;
+    evaluation += 20 * eval_pieces(board);
+    evaluation += 10 * eval_mills(board);
+    evaluation += 3 * eval_moves(board);
+    return evaluation;
 }

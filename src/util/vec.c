@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <assert.h>
 
 #include "vec.h"
 
@@ -27,7 +28,9 @@ vec vec_with_cap(size_t capacity, size_t type_size)
 
 vecdata_t *vec_get(vec vector)
 {
-    return &((vecdata_t*) vector)[-1];
+    vecdata_t *result = &((vecdata_t*) vector)[-1];
+    assert(result != NULL);
+    return result;
 }
 
 size_t vec_get_alloc(vec vector)

@@ -10,6 +10,8 @@
 #define NAME_LEN 100
 
 #define _XOPEN_SOURCE 700
+#define _OPEN_THREADS
+#define _GNU_SOURCE
 
 typedef enum err {
     NO_ERROR = 0,

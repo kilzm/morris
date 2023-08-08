@@ -1,5 +1,4 @@
-CC=/usr/bin/gcc
-CFLAGS=-std=gnu99 -g -O3 -pthread
+CFLAGS=-std=gnu11 -g -O3 -pthread
 WFLAGS=-Wall -Wextra -Wpedantic -Wshadow -Wfloat-equal -Wpointer-arith -Wcast-align 	   \
 	-Wstrict-prototypes -Wno-strict-overflow -Wwrite-strings -Waggregate-return -Wcast-qual \
 	-Wswitch-default -Wswitch-enum -Wconversion -Wunreachable-code
